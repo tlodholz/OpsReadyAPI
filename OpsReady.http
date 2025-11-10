@@ -1,0 +1,6 @@
+@OpsReady_HostAddress = http://localhost:5186
+
+GET {{OpsReady_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
