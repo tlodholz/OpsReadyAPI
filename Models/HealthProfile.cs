@@ -1,5 +1,8 @@
-﻿namespace OpsReady.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace OpsReady.Models
 {
+    [Table("OpsReady_HealthProfile")]
     public class HealthProfile
     {
         public int HealthProfileId { get; set; }
@@ -8,9 +11,6 @@
         public string Allergies { get; set; } = string.Empty;
         public string Medications { get; set; } = string.Empty;
         public string MedicalConditions { get; set; } = string.Empty;
-        public string EmergencyContactName { get; set; } = string.Empty;
-        public string EmergencyContactRelationship { get; set; } = string.Empty;
-        public string EmergencyContactPhone { get; set; } = string.Empty;
         public string PrimaryPhysicianName { get; set; } = string.Empty;
         public string PrimaryPhysicianPhone { get; set; } = string.Empty;
         public string InsuranceProvider { get; set; } = string.Empty;

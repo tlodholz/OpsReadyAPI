@@ -1,8 +1,9 @@
-﻿namespace OpsReady.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace OpsReady.Models
 {
-    public class Vehicles
-    {
-        public class Vehicle
+    [Table("OpsReady_Vehicle")]
+    public class Vehicle
         {
             // 🚘 Core Identity
             public int VehicleId { get; set; }
@@ -77,5 +78,5 @@
             public string RecordUpdatedBy { get; set; }
             public DateTime RecordUpdatedDate { get; set; }
         }
-    }
+    
 }

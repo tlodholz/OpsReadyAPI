@@ -1,8 +1,10 @@
-﻿using static OpsReady.Models.Vehicles;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using static OpsReady.Models.Vehicle;
 
 namespace OpsReady.Models
 {
-    public class VehicleMaintenanceLog
+    [Table("OpsReady_VehicleMaintenance")]
+    public class VehicleMaintenance
     {
         // 🔗 Identity & Linkage
         public int MaintenanceId { get; set; }

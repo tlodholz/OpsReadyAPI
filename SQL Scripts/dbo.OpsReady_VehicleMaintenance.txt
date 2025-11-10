@@ -1,0 +1,50 @@
+CREATE TABLE dbo.OpsReady_VehicleMaintenance
+(
+    MaintenanceId       INT             IDENTITY(1,1) PRIMARY KEY,
+    VehicleId           INT             NOT NULL,
+    UnitNumber          NVARCHAR(50)    NULL, -- optional redundancy
+
+    ServiceDate         DATETIME2       NULL,
+    ServiceType         NVARCHAR(200)   NULL,
+    Description         NVARCHAR(MAX)   NULL,
+    OdometerReading     INT             NULL DEFAULT(0),
+    IsScheduledService  BIT             NULL DEFAULT(0),
+    IsRepair            BIT             NULL DEFAULT(0),
+    IsUpgrade           BIT             NULL DEFAULT(0),
+
+    PartsReplaced       NVARCHAR(MAX)   NULL,
+    LaborPerformedBy    NVARCHAR(200)   NULL,
+    LaborCost           DECIMAL(18,2)   NULL DEFAULT(0.00),
+    PartsCost           DECIMAL(18,2)   NULL DEFAULT(0.00),
+    TotalCost           AS (LaborCost + PartsCost) PERSISTED, -- computed from labor + parts
+
+    PassedInspection    BIT             NULL DEFAULT(0),
+    InspectionNotes     NVARCHAR(MAX)   NULL,
+    NextInspectionDue   DATETIME2       NULL,
+
+    RecordCreatedBy     NVARCHAR(256)   NOT NULL,
+    RecordCreatedDate   DATETIME2       NOT NULL DEFAULT SYSUTCDATETIME(),
+    RecordUpdatedBy     NVARCHAR(256)   NOT NULL,
+    RecordUpdatedDate   DATETIME2       NOT NULL DEFAULT SYSUTCDATETIME()
+);
+GO
+
+-- Foreign key to vehicle (ensure dbo.OpsReady_Vehicle exists)
+ALTER TABLE dbo.OpsReady_VehicleMaintenance
+ADD CONSTRAINT FK_VehicleMaintenance_Vehicle
+    FOREIGN KEY (VehicleId) REFERENCES dbo.OpsReady_Vehicle (VehicleId);
+GO
+
+-- Indexes for common queries
+CREATE NONCLUSTERED INDEX IX_VehicleMaintenance_VehicleId
+    ON dbo.OpsReady_VehicleMaintenance (VehicleId);
+GO
+CREATE NONCLUSTERED INDEX IX_VehicleMaintenance_ServiceDate
+    ON dbo.OpsReady_VehicleMaintenance (ServiceDate);
+GO
+CREATE NONCLUSTERED INDEX IX_VehicleMaintenance_IsScheduledService
+    ON dbo.OpsReady_VehicleMaintenance (IsScheduledService);
+GO
+CREATE NONCLUSTERED INDEX IX_VehicleMaintenance_PassedInspection
+    ON dbo.OpsReady_VehicleMaintenance (PassedInspection);
+GO

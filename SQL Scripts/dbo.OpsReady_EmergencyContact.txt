@@ -1,0 +1,40 @@
+CREATE TABLE [dbo].[OpsReady_EmergencyContact] (
+    [EmergencyContactId]  INT            IDENTITY (1, 1) NOT NULL,
+    [UserId]              INT            NOT NULL,
+    [FirstName]           NVARCHAR (100) DEFAULT ('') NULL,
+    [LastName]            NVARCHAR (100) DEFAULT ('') NULL,
+    [IsPrimary]           BIT            DEFAULT ((0)) NULL,
+    [Relationship]        NVARCHAR (100) DEFAULT ('') NULL,
+    [PhoneNumber]         NVARCHAR (50)  DEFAULT ('') NULL,
+    [PhoneNumberIsMobile] BIT            DEFAULT ((0)) NULL,
+    [EmailAddress]        NVARCHAR (256) DEFAULT ('') NULL,
+    [Address1]            NVARCHAR (200) DEFAULT ('') NULL,
+    [Address2]            NVARCHAR (200) DEFAULT ('') NULL,
+    [Address3]            NVARCHAR (200) DEFAULT ('') NULL,
+    [City]                NVARCHAR (100) DEFAULT ('') NULL,
+    [State]               NVARCHAR (50)  DEFAULT ('') NULL,
+    [ZipCode]             NVARCHAR (20)  DEFAULT ('') NULL,
+    [Country]             NVARCHAR (100) DEFAULT ('') NULL,
+    [RecordCreatedBy]     NVARCHAR (256) NOT NULL,
+    [RecordCreatedDate]   DATETIME2 (7)  DEFAULT (sysutcdatetime()) NOT NULL,
+    [RecordUpdatedBy]     NVARCHAR (256) NOT NULL,
+    [RecordUpdatedDate]   DATETIME2 (7)  DEFAULT (sysutcdatetime()) NOT NULL,
+    PRIMARY KEY CLUSTERED ([EmergencyContactId] ASC),
+    CONSTRAINT [FK_EmergencyContact_UserProfile] FOREIGN KEY ([UserId]) REFERENCES [dbo].[OpsReady_UserProfile] ([UserId])
+);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_EmergencyContact_UserId]
+    ON [dbo].[OpsReady_EmergencyContact]([UserId] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_EmergencyContact_Email]
+    ON [dbo].[OpsReady_EmergencyContact]([EmailAddress] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_EmergencyContact_Phone]
+    ON [dbo].[OpsReady_EmergencyContact]([PhoneNumber] ASC);
+

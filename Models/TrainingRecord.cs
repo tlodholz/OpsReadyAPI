@@ -1,10 +1,13 @@
-﻿namespace OpsReady.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace OpsReady.Models
 {
+    [Table("OpsReady_TrainingRecord")]
     public class TrainingRecord
     {
-        public int RecordId { get; set; }
-        public int UserId { get; set; }
+        public int TrainingRecordId { get; set; }
         public int TrainingEventId { get; set; }
+        public int UserId { get; set; }
         public DateTime CompletionDate { get; set; }
         public string Status { get; set; }
         public string TrainingOutcome { get; set; }

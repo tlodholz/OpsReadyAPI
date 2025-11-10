@@ -1,0 +1,35 @@
+CREATE TABLE dbo.OpsReady_HealthProfile
+(
+    HealthProfileId          INT         IDENTITY(1,1) PRIMARY KEY,
+    UserId                   INT         NOT NULL,
+    BloodType                NVARCHAR(10)  NULL DEFAULT(''),
+    Allergies                NVARCHAR(MAX) NULL DEFAULT(''),
+    Medications              NVARCHAR(MAX) NULL DEFAULT(''),
+    MedicalConditions        NVARCHAR(MAX) NULL DEFAULT(''),
+
+    PrimaryPhysicianName     NVARCHAR(200) NULL DEFAULT(''),
+    PrimaryPhysicianPhone    NVARCHAR(50)  NULL DEFAULT(''),
+    InsuranceProvider        NVARCHAR(200) NULL DEFAULT(''),
+    InsurancePolicyNumber    NVARCHAR(200) NULL DEFAULT(''),
+    RecentInjuries           NVARCHAR(MAX) NULL DEFAULT(''),
+    LastPhysicalExamDate     DATETIME2     NULL,
+    Notes                    NVARCHAR(MAX) NULL DEFAULT(''),
+    RecordCreatedBy          NVARCHAR(256) NULL,
+    RecordCreatedDate        DATETIME2     NOT NULL DEFAULT SYSUTCDATETIME(),
+    RecordUpdatedBy          NVARCHAR(256) NOT NULL,
+    RecordUpdatedDate        DATETIME2     NOT NULL DEFAULT SYSUTCDATETIME()
+);
+GO
+
+-- Optional FK to user profile (ensure OpsReady_UserProfile exists)
+ALTER TABLE dbo.OpsReady_HealthProfile
+ADD CONSTRAINT FK_HealthProfile_UserProfile
+    FOREIGN KEY (UserId) REFERENCES dbo.OpsReady_UserProfile (UserId);
+GO
+
+CREATE NONCLUSTERED INDEX IX_HealthProfile_UserId
+    ON dbo.OpsReady_HealthProfile (UserId);
+GO
+CREATE NONCLUSTERED INDEX IX_HealthProfile_InsurancePolicyNumber
+    ON dbo.OpsReady_HealthProfile (InsurancePolicyNumber);
+GO

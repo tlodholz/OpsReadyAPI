@@ -1,0 +1,88 @@
+CREATE TABLE dbo.OpsReady_Vehicle
+(
+    VehicleId               INT             IDENTITY(1,1) PRIMARY KEY,
+    UnitNumber              NVARCHAR(50)    NULL,
+    VIN                     NVARCHAR(50)    NULL,
+    LicensePlate            NVARCHAR(50)    NULL,
+    Make                    NVARCHAR(100)   NULL,
+    Model                   NVARCHAR(100)   NULL,
+    Year                    INT             NULL,
+    Color                   NVARCHAR(50)    NULL,
+    DepartmentalAssetTag    NVARCHAR(100)   NULL,
+    VehicleImageUrl         NVARCHAR(2083)  NULL,
+    PurchaseDate            DATETIME2       NULL,
+    PurchasePrice           DECIMAL(18,2)   NULL DEFAULT(0),
+    FuelType                NVARCHAR(50)    NULL,
+
+    VehicleType             NVARCHAR(50)    NULL,
+    IsK9Unit                NVARCHAR(10)    NULL, -- string in model; consider changing to BIT if boolean
+    Status                  NVARCHAR(50)    NULL,
+    AssignedOfficerId       INT             NULL,
+    AssignedUnit            NVARCHAR(100)   NULL,
+    AssignmentDate          DATETIME2       NULL,
+    ReturnDate              DATETIME2       NULL,
+
+    CurrentOdometer         INT             NOT NULL DEFAULT(0),
+    LastServiceDate         DATETIME2       NULL,
+    NextServiceDue          DATETIME2       NULL,
+    MaintenanceId           INT             NULL,
+    IsOperational           BIT             NULL DEFAULT(0),
+
+    HasBodyCamDock          BIT             NULL DEFAULT(0),
+    HasInCarCamera          BIT             NULL DEFAULT(0),
+    HasRifleMount           BIT             NULL DEFAULT(0),
+    HasK9Cage               BIT             NULL DEFAULT(0),
+    RadioId                 NVARCHAR(100)   NULL,
+    MDTSerial               NVARCHAR(100)   NULL,
+
+    DecommissionedDate      DATETIME2       NULL,
+    DecommissionReason      NVARCHAR(500)   NULL,
+
+    Notes                   NVARCHAR(MAX)   NULL,
+    WarrantyInfo            NVARCHAR(500)   NULL,
+    InsurancePolicyNumber   NVARCHAR(200)   NULL,
+    InsuranceExpiryDate     DATETIME2       NULL,
+    GPSUnitId               NVARCHAR(100)   NULL,
+    CostCenterCode          NVARCHAR(100)   NULL,
+    VendorInfo              NVARCHAR(500)   NULL,
+    ReplacementSchedule     NVARCHAR(200)   NULL,
+    VehicleGroupId          INT             NULL,
+    DigitalAccessLog        NVARCHAR(MAX)   NULL,
+
+    HasEmergencyLights      BIT             NULL DEFAULT(0),
+    HasSiren                BIT             NULL DEFAULT(0),
+    HasPushBumper           BIT             NULL DEFAULT(0),
+    CustomDecals            NVARCHAR(500)   NULL,
+    InteriorConfiguration   NVARCHAR(MAX)   NULL,
+    ExteriorConfiguration   NVARCHAR(MAX)   NULL,
+    SpecializedEquipment    NVARCHAR(MAX)   NULL,
+    CommunicationSystems    NVARCHAR(MAX)   NULL,
+    SafetyFeatures          NVARCHAR(MAX)   NULL,
+    PerformanceUpgrades     NVARCHAR(MAX)   NULL,
+
+    RecordCreatedBy         NVARCHAR(256)   NOT NULL,
+    RecordCreatedDate       DATETIME2       NOT NULL DEFAULT SYSUTCDATETIME(),
+    RecordUpdatedBy         NVARCHAR(256)   NOT NULL,
+    RecordUpdatedDate       DATETIME2       NOT NULL DEFAULT SYSUTCDATETIME()
+);
+GO
+
+-- Optional FK to user profile (uncomment if dbo.OpsReady_UserProfile exists)
+-- ALTER TABLE dbo.OpsReady_Vehicle
+-- ADD CONSTRAINT FK_Vehicle_AssignedOfficer_UserProfile
+--     FOREIGN KEY (AssignedOfficerId) REFERENCES dbo.OpsReady_UserProfile (UserId);
+-- GO
+
+-- Indexes for common lookups
+CREATE NONCLUSTERED INDEX IX_Vehicle_UnitNumber
+    ON dbo.OpsReady_Vehicle (UnitNumber);
+	GO
+CREATE NONCLUSTERED INDEX IX_Vehicle_VIN
+    ON dbo.OpsReady_Vehicle (VIN);
+GO
+CREATE NONCLUSTERED INDEX IX_Vehicle_AssignedOfficerId
+    ON dbo.OpsReady_Vehicle (AssignedOfficerId);
+	GO
+CREATE NONCLUSTERED INDEX IX_Vehicle_VehicleGroupId
+    ON dbo.OpsReady_Vehicle (VehicleGroupId);
+GO

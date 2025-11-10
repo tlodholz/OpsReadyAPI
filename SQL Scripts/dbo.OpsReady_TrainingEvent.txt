@@ -1,0 +1,31 @@
+CREATE TABLE dbo.OpsReady_TrainingEvent
+(
+    TrainingEventId          INT         IDENTITY(1,1) PRIMARY KEY,
+    Title                    NVARCHAR(200)   NULL,
+    Description              NVARCHAR(MAX)   NULL,
+    RecordedDate             DATETIME2       NULL,
+    StartDate                DATETIME2       NULL,
+    EndDate                  DATETIME2       NULL,
+    Location                 NVARCHAR(200)   NULL,
+    Instructor               NVARCHAR(200)   NULL DEFAULT(''),
+    DurationHours            INT             NULL DEFAULT(0),
+    CertificationIssued      BIT             NULL DEFAULT(0),
+    CertificationIssuedBy    NVARCHAR(200)   NULL,
+    CertificationExpiryDate  DATETIME2       NULL,
+    RecordCreatedBy          NVARCHAR(256)   NOT NULL,
+    RecordCreatedDate        DATETIME2       NOT NULL DEFAULT SYSUTCDATETIME(),
+    RecordUpdatedBy          NVARCHAR(256)   NOT NULL,
+    RecordUpdatedDate        DATETIME2       NOT NULL DEFAULT SYSUTCDATETIME()
+);
+GO
+
+-- Useful indexes for common lookups
+CREATE NONCLUSTERED INDEX IX_TrainingEvent_StartDate
+    ON dbo.OpsReady_TrainingEvent (StartDate);
+	GO
+CREATE NONCLUSTERED INDEX IX_TrainingEvent_Instructor
+    ON dbo.OpsReady_TrainingEvent (Instructor);
+GO
+CREATE NONCLUSTERED INDEX IX_TrainingEvent_Title
+    ON dbo.OpsReady_TrainingEvent (Title);
+GO

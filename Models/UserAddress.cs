@@ -1,6 +1,9 @@
-﻿namespace OpsReady.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace OpsReady.Models
 {
-    public class Addresses
+    [Table("OpsReady_UserAddress")]
+    public class UserAddress
     {
         public int AddressId { get; set; }
         public int UserId { get; set; }

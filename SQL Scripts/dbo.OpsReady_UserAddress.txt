@@ -1,0 +1,33 @@
+CREATE TABLE dbo.OpsReady_UserAddress
+(
+    AddressId           INT         IDENTITY(1,1) PRIMARY KEY,
+    UserId              INT         NOT NULL,
+    Address1            NVARCHAR(200) NULL,
+    Address2            NVARCHAR(200) NULL,
+    Address3            NVARCHAR(200) NULL,
+    City                NVARCHAR(100) NULL,
+    State               NVARCHAR(50)  NULL,
+    ZipCode             NVARCHAR(20)  NULL,
+    Country             NVARCHAR(100) NULL,
+    Phone               NVARCHAR(50)  NULL,
+    IsPrimary           BIT           NULL DEFAULT(0),
+    RecordCreatedBy     NVARCHAR(256) NOT NULL,
+    RecordCreatedDate   DATETIME2     NOT NULL DEFAULT SYSUTCDATETIME(),
+    RecordUpdatedBy     NVARCHAR(256) NOT NULL,
+    RecordUpdatedDate   DATETIME2     NOT NULL DEFAULT SYSUTCDATETIME()
+);
+GO
+
+-- Optional foreign key to user profile (ensure dbo.OpsReady_UserProfile exists)
+ALTER TABLE dbo.OpsReady_UserAddress
+ADD CONSTRAINT FK_UserAddress_UserProfile
+    FOREIGN KEY (UserId) REFERENCES dbo.OpsReady_UserProfile (UserId);
+GO
+
+-- Indexes for common lookups
+CREATE NONCLUSTERED INDEX IX_UserAddress_UserId
+    ON dbo.OpsReady_UserAddress (UserId);
+GO
+CREATE NONCLUSTERED INDEX IX_UserAddress_IsPrimary
+    ON dbo.OpsReady_UserAddress (IsPrimary);
+GO

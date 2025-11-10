@@ -1,5 +1,8 @@
-﻿namespace OpsReady.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace OpsReady.Models
 {
+    [Table("OpsReady_TrainingEvent")]
     public class TrainingEvent
     {
         public int TrainingEventId { get; set; }

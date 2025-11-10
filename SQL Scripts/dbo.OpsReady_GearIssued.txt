@@ -1,0 +1,59 @@
+CREATE TABLE dbo.OpsReady_GearIssued
+(
+    GearIssuedId         INT         IDENTITY(1,1) PRIMARY KEY NOT NULL, -- Note: matches C# property name (GearIssued)
+    OfficerId            INT         NOT NULL,
+    GearType             NVARCHAR(100) NULL DEFAULT(''),
+    GearName             NVARCHAR(200) NULL DEFAULT(''),
+    SerialNumber         NVARCHAR(200) NULL DEFAULT(''),
+    IssuedDate           DATETIME2   NULL,
+    DueDate              DATETIME2   NULL,
+    PurchaseDate         DATETIME2   NULL,
+    ReturnedDate         DATETIME2   NULL,
+    Condition            NVARCHAR(50)  NULL DEFAULT(''),
+    Status               NVARCHAR(50)  NULL DEFAULT(''),
+    Location             NVARCHAR(100) NULL DEFAULT(''),
+
+    RequiresCertification BIT         NULL DEFAULT(0),
+    CertificationType    NVARCHAR(100) NULL,
+    CertificationDate    DATETIME2     NULL,
+    CertificationExpiry  DATETIME2     NULL,
+    TrainingId           INT           NULL,
+
+    GearTier             NVARCHAR(50)  NULL DEFAULT(''),
+    UsageRestrictions    NVARCHAR(MAX) NULL,
+    AssignedVehicleId    INT           NULL,
+    LastInspectionDate   DATETIME2     NULL,
+    NextInspectionDue    DATETIME2     NULL,
+    MaintenanceNotes     NVARCHAR(MAX) NULL,
+
+    GearImageUrl         NVARCHAR(2083) NULL,
+    WarrantyInfo         NVARCHAR(500)  NULL,
+    VendorInfo           NVARCHAR(500)  NULL,
+    CostCenterCode       NVARCHAR(100)  NULL,
+    ReplacementSchedule  NVARCHAR(200)  NULL,
+    GearGroupId          INT            NULL,
+    DigitalAccessLog     NVARCHAR(MAX)  NULL,
+
+    RecordCreatedBy      NVARCHAR(256)  NOT NULL,
+    RecordCreatedDate    DATETIME2      NOT NULL DEFAULT SYSUTCDATETIME(),
+    RecordUpdatedBy      NVARCHAR(256)  NOT NULL,
+    RecordUpdatedDate    DATETIME2      NOT NULL DEFAULT SYSUTCDATETIME()
+);
+GO
+
+-- Optional: foreign key to user profile if that table exists
+ALTER TABLE dbo.OpsReady_GearIssued
+ADD CONSTRAINT FK_GearIssued_Officer_UserProfile
+    FOREIGN KEY (OfficerId) REFERENCES dbo.OpsReady_UserProfile (UserId);
+GO
+
+-- Useful indexes
+CREATE NONCLUSTERED INDEX IX_GearIssued_OfficerId
+    ON dbo.OpsReady_GearIssued (OfficerId);
+GO
+CREATE NONCLUSTERED INDEX IX_GearIssued_SerialNumber
+    ON dbo.OpsReady_GearIssued (SerialNumber);
+GO
+CREATE NONCLUSTERED INDEX IX_GearIssued_GearGroupId
+    ON dbo.OpsReady_GearIssued (GearGroupId);
+GO

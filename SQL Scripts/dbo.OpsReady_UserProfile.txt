@@ -1,0 +1,54 @@
+CREATE TABLE dbo.OpsReady_UserProfile
+(
+    UserId                        INT             IDENTITY(1,1) PRIMARY KEY,
+    FirstName                     NVARCHAR(100)   NOT NULL DEFAULT(''),
+    LastName                      NVARCHAR(100)   NOT NULL DEFAULT(''),
+    PreferredName                 NVARCHAR(100)   NOT NULL DEFAULT(''),
+    BadgeNumber                   NVARCHAR(50)    NOT NULL DEFAULT(''),
+    Position                      NVARCHAR(100)   NOT NULL DEFAULT(''),
+    Department                    NVARCHAR(100)   NOT NULL DEFAULT(''),
+    Location                      NVARCHAR(100)   NOT NULL DEFAULT(''),
+    Address1                      NVARCHAR(200)   NOT NULL DEFAULT(''),
+    Address2                      NVARCHAR(200)   NOT NULL DEFAULT(''),
+    City                          NVARCHAR(100)   NOT NULL DEFAULT(''),
+    State                         NVARCHAR(50)    NOT NULL DEFAULT(''),
+    ZipCode                       NVARCHAR(20)    NOT NULL DEFAULT(''),
+    Skills                        NVARCHAR(MAX)   NOT NULL DEFAULT(''),
+    Status                        NVARCHAR(50)    NOT NULL DEFAULT(''), -- Active, Suspended, Retired, etc.
+    Rank                          NVARCHAR(50)    NOT NULL DEFAULT(''),
+    Bio                           NVARCHAR(MAX)   NULL,
+    AvatarUrl                     NVARCHAR(2083)  NULL,
+    Email                         NVARCHAR(256)   NULL,
+    Phone                         NVARCHAR(50)    NULL,
+    PhoneNumber                   NVARCHAR(50)    NOT NULL DEFAULT(''),
+    EmailAddress                  NVARCHAR(256)   NOT NULL DEFAULT(''),
+    DateOfBirth                   DATE            NOT NULL,
+    DateOfHire                    DATE            NOT NULL,
+    Gender                        NVARCHAR(50)    NOT NULL DEFAULT(''),
+    Ethnicity                     NVARCHAR(100)   NOT NULL DEFAULT(''),
+    ShiftSchedule                 NVARCHAR(100)   NOT NULL DEFAULT(''),
+    SupervisorBadgeNumber         NVARCHAR(50)    NOT NULL DEFAULT(''),
+    StationLocation               NVARCHAR(100)   NOT NULL DEFAULT(''),
+    LegalRestrictions             NVARCHAR(MAX)   NOT NULL DEFAULT(''),
+    ExemptionsGranted             NVARCHAR(MAX)   NOT NULL DEFAULT(''),
+    DisciplinaryActions           NVARCHAR(MAX)   NOT NULL DEFAULT(''),
+    UseOfForceClearance           NVARCHAR(100)   NOT NULL DEFAULT(''),
+    LanguageFluency               NVARCHAR(200)   NULL,
+    SpecialClearances             NVARCHAR(MAX)   NULL,
+    IsActiveDuty                  BIT             NOT NULL DEFAULT(0),
+    CommandingOfficerBadgeNumber  NVARCHAR(50)    NULL,
+    Notes                         NVARCHAR(MAX)   NULL,
+    RecordCreatedBy               NVARCHAR(256)   NULL,
+    RecordCreatedDate             DATETIME2       NOT NULL DEFAULT SYSUTCDATETIME(),
+    RecordUpdatedBy               NVARCHAR(256)   NULL,
+    RecordUpdatedDate             DATETIME2       NOT NULL DEFAULT SYSUTCDATETIME()
+);
+GO
+
+-- Helpful non-clustered indexes for lookup operations
+CREATE NONCLUSTERED INDEX IX_OpsReady_UserProfile_BadgeNumber
+    ON dbo.OpsReady_UserProfile (BadgeNumber);
+
+CREATE NONCLUSTERED INDEX IX_OpsReady_UserProfile_EmailAddress
+    ON dbo.OpsReady_UserProfile (EmailAddress);
+GO

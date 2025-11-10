@@ -1,9 +1,12 @@
-﻿namespace OpsReady.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace OpsReady.Models
 {
+    [Table("OpsReady_GearIssued")]
     public class GearIssued
     {
         // 🧰 Core Gear Fields
-        public int GearId { get; set; }
+        public int GearIssuedId { get; set; }
         public int OfficerId { get; set; }
         public string GearType { get; set; } // e.g., Firearm, BodyCam, Uniform
         public string GearName { get; set; }

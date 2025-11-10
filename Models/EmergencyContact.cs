@@ -1,6 +1,9 @@
-﻿namespace OpsReady.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace OpsReady.Models
 {
-    public class EmergencyContacts
+    [Table("OpsReady_EmergencyContact")]
+    public class EmergencyContact
     {
         public int EmergencyContactId { get; set; }
         public int UserId { get; set; }
