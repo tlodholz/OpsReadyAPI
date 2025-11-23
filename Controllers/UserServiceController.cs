@@ -25,6 +25,15 @@ namespace OpsReady.Controllers
             _hasher = new PasswordHasher<User>();
         }
 
+        // GET: api/UserService/users
+        // Returns all application users (from OpsReady_User)
+        [HttpGet("users")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await _context.Set<User>().AsNoTracking().ToListAsync();
+            return Ok(users);
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {

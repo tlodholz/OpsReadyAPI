@@ -16,6 +16,15 @@ namespace OpsReady.Controllers
             _context = context;
         }
 
+        // GET: api/UserProfile/all
+        // Returns all user profiles (no filtering)
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAll()
+        {
+            var results = await _context.Set<UserProfile>().AsNoTracking().ToListAsync();
+            return Ok(results);
+        }
+
         // GET: api/UserProfile
         // Optional query: ?userId=1&badgeNumber=ABC&name=smith&isActiveDuty=true
         [HttpGet]
