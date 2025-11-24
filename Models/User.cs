@@ -28,6 +28,9 @@
 
         public bool IsActive { get; set; } = true;
 
+        [MaxLength(255)]
+        public string ImagePath { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
