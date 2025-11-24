@@ -18,18 +18,18 @@
         public string PasswordHash { get; set; }
 
         [MaxLength(255)]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [MaxLength(50)]
-        public string Role { get; set; }
+        public string? Role { get; set; }
 
         [MaxLength(50)]
-        public string BadgeLevel { get; set; }
+        public string? BadgeLevel { get; set; }
 
         public bool IsActive { get; set; } = true;
 
         [MaxLength(255)]
-        public string ImagePath { get; set; }
+        public string? ImagePath { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
