@@ -66,16 +66,22 @@ namespace OpsReady.Controllers
             return CreatedAtAction(nameof(Get), new { id = profile.UserId }, profile);
         }
 
-        // PUT: api/UserProfile/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UserProfile input)
+        // PUT: api/UserProfile
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] UserProfile input)
         {
-            if (input == null || id != input.UserId) return BadRequest();
+            if (input == null) return BadRequest();
 
-            var stored = await _context.Set<UserProfile>().FindAsync(id);
+            // Require the primary key to be present in the payload
+            if (input.Id == 0) return BadRequest("Id must be provided and non-zero.");
+
+            // Optionally require UserId as well if your logic depends on it:
+            // if (input.UserId == 0) return BadRequest("UserId must be provided and non-zero.");
+
+            var stored = await _context.Set<UserProfile>().FindAsync(input.Id);
             if (stored == null) return NotFound();
 
-            // Map updatable fields explicitly
+            // Map updatable fields explicitly (do not change PK/UserId unless intentionally allowed)
             stored.FirstName = input.FirstName;
             stored.LastName = input.LastName;
             stored.PreferredName = input.PreferredName;
