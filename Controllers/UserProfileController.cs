@@ -92,8 +92,6 @@ namespace OpsReady.Controllers
             stored.Status = input.Status;
             stored.Rank = input.Rank;
             stored.Bio = input.Bio;
-            stored.Email = input.Email;
-            stored.Phone = input.Phone;
             stored.PhoneNumber = input.PhoneNumber;
             stored.EmailAddress = input.EmailAddress;
             stored.DateOfBirth = input.DateOfBirth;
