@@ -29,23 +29,11 @@ namespace OpsReady.Controllers
         // Optional query: ?userId=1&badgeNumber=ABC&name=smith&isActiveDuty=true
         [HttpGet]
         public async Task<IActionResult> List(
-            [FromQuery] int? userId,
-            [FromQuery] string? badgeNumber,
-            [FromQuery] string? name,
-            [FromQuery] bool? isActiveDuty)
+            [FromQuery] int? userId)
         {
             var q = _context.Set<UserProfile>().AsQueryable();
 
             if (userId.HasValue) q = q.Where(u => u.UserId == userId.Value);
-            if (!string.IsNullOrWhiteSpace(badgeNumber)) q = q.Where(u => u.BadgeNumber == badgeNumber);
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                var pattern = $"%{name}%";
-                q = q.Where(u => EF.Functions.Like(u.FirstName, pattern) ||
-                                 EF.Functions.Like(u.LastName, pattern) ||
-                                 EF.Functions.Like(u.PreferredName, pattern));
-            }
-            if (isActiveDuty.HasValue) q = q.Where(u => u.IsActiveDuty == isActiveDuty.Value);
 
             var results = await q.AsNoTracking().ToListAsync();
             return Ok(results);

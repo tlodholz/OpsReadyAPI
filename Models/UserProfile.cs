@@ -6,6 +6,7 @@ namespace OpsReady.Models
     [Table("OpsReady_UserProfile")]
     public class UserProfile
     {
+        public int Id { get; set; }
         public int UserId { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
@@ -23,7 +24,6 @@ namespace OpsReady.Models
         public string Status { get; set; } = string.Empty; //Active, Suspended, Retired, etc.
         public string Rank { get; set; } = string.Empty;
         public string Bio { get; set; }
-        public string AvatarUrl { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
         public string PhoneNumber { get; set; } = string.Empty;

@@ -13,6 +13,7 @@ namespace OpsReady.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<UserProfile> UserProfiles { get; set; }    // <-- add this
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -21,6 +22,9 @@ namespace OpsReady.Data
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
                 .IsUnique();
+
+            modelBuilder.Entity<UserProfile>()                 // optional: explicit config
+                .HasKey(up => up.UserId);
         }
     }
 }
