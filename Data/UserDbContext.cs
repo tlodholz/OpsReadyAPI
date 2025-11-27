@@ -15,16 +15,16 @@ namespace OpsReady.Data
         public DbSet<User> Users { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }    // <-- add this
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<User>()
-                .HasIndex(u => u.Username)
-                .IsUnique();
+        //    modelBuilder.Entity<User>()
+        //        .HasIndex(u => u.Username)
+        //        .IsUnique();
 
-            modelBuilder.Entity<UserProfile>()                 // optional: explicit config
-                .HasKey(up => up.UserId);
-        }
+        //    modelBuilder.Entity<UserProfile>()                 // optional: explicit config
+        //        .HasKey(up => up.UserId);
+        //}
     }
 }
