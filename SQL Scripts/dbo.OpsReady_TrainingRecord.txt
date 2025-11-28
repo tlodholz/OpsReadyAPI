@@ -1,48 +1,35 @@
-CREATE TABLE dbo.OpsReady_TrainingRecord
-(
-    TrainingRecordId         INT         IDENTITY(1,1) PRIMARY KEY,
-    TrainingEventId          INT         NOT NULL,
-    UserId                   INT         NOT NULL,
-    CompletionDate           DATETIME2   NULL,
-    Status                   NVARCHAR(100)  NULL,
-    TrainingOutcome          NVARCHAR(MAX)  NULL,
-    Score                    NVARCHAR(50)   NULL,
-    ProficiencyLevel         NVARCHAR(100)  NULL,
-    Notes                    NVARCHAR(MAX)  NULL,
-    HoursCompleted           INT            NULL DEFAULT(0),
-    Completed                BIT            NULL DEFAULT(0),
-    ExpirationDate           DATE           NULL,         -- maps from C# DateOnly
-    Strengths                NVARCHAR(MAX)  NULL,
-    AreasForImprovement      NVARCHAR(MAX)  NULL,
-    FollowUpRequired         BIT            NULL DEFAULT(0),
-    FollowUpDate             DATETIME2      NULL,
-    EvaluatorId              INT            NULL,
-    EvaluatorBadgeNumber     NVARCHAR(50)   NULL,
-    EvaluationDate           DATETIME2      NULL,
-    EvaluationType           NVARCHAR(100)  NULL,
-    RecordCreatedBy          NVARCHAR(256)  NOT NULL,
-    RecordCreatedDate        DATETIME2      NOT NULL DEFAULT SYSUTCDATETIME(),
-    RecordUpdatedBy          NVARCHAR(256)  NOT NULL,
-    RecordUpdatedDate        DATETIME2      NOT NULL DEFAULT SYSUTCDATETIME()
-);
-GO
-
--- Optional foreign keys (uncomment if referenced tables exist)
-ALTER TABLE dbo.OpsReady_TrainingRecord
-ADD CONSTRAINT FK_TrainingRecord_TrainingEvent
-    FOREIGN KEY (TrainingEventId) REFERENCES dbo.OpsReady_TrainingEvent (TrainingEventId);
-GO
-
--- Indexes for common lookups
-CREATE NONCLUSTERED INDEX IX_TrainingRecord_TrainingEventId
-    ON dbo.OpsReady_TrainingRecord (TrainingEventId);
-	GO
-CREATE NONCLUSTERED INDEX IX_TrainingRecord_UserId
-    ON dbo.OpsReady_TrainingRecord (UserId);
-	GO
-CREATE NONCLUSTERED INDEX IX_TrainingRecord_EvaluatorId
-    ON dbo.OpsReady_TrainingRecord (EvaluatorId);
-	GO
-CREATE NONCLUSTERED INDEX IX_TrainingRecord_ExpirationDate
-    ON dbo.OpsReady_TrainingRecord (ExpirationDate);
-GO
+CREATE TABLE dbo.OpsReady_TrainingRecord (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    TrainingEventId INT NULL,
+    UserId INT NULL,
+    AssignedBy NVARCHAR(200) NULL,
+    Attendance NVARCHAR(200) NULL,
+    Status NVARCHAR(200) NULL,
+    TrainingOutcome NVARCHAR(200) NULL,
+    Score NVARCHAR(50) NULL,
+    CertificationNumber NVARCHAR(200) NULL,
+    SkillLevelAchieved NVARCHAR(200) NULL,
+    ProficiencyLevel NVARCHAR(200) NULL,
+    Notes NVARCHAR(500) NULL,
+    HoursCompleted INT NULL,
+    Completed BIT NULL,
+    Strengths NVARCHAR(500) NULL,
+    AreasForImprovement NVARCHAR(500) NULL,
+    FollowUpRequired BIT NULL,
+    EvaluatorId INT NULL,
+    Evaluator NVARCHAR(100) NULL,
+    EvaluationComments NVARCHAR(500) NULL,
+    EvaluationType NVARCHAR(500) NULL,
+    OfficialComments NVARCHAR(1000) NULL,
+    EnrollmentDate DATETIME2 NULL,
+    EvaluationDate DATETIME2 NULL,
+    FollowUpDate DATETIME2 NULL,
+    ExpirationDate DATE NULL,
+    CertificationIssuedDate DATETIME2 NULL,
+    CertificationExpiryDate DATETIME2 NULL,
+    CompletionDate DATETIME2 NULL,
+    RecordCreatedBy NVARCHAR(200) NULL,
+    RecordCreatedDate DATETIME2 NULL,
+    RecordUpdatedBy NVARCHAR(200) NULL,
+    RecordUpdatedDate DATETIME2 NULL
+	)

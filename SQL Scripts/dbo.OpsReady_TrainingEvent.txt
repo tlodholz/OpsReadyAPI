@@ -1,31 +1,35 @@
-CREATE TABLE dbo.OpsReady_TrainingEvent
-(
-    TrainingEventId          INT         IDENTITY(1,1) PRIMARY KEY,
-    Title                    NVARCHAR(200)   NULL,
-    Description              NVARCHAR(MAX)   NULL,
-    RecordedDate             DATETIME2       NULL,
-    StartDate                DATETIME2       NULL,
-    EndDate                  DATETIME2       NULL,
-    Location                 NVARCHAR(200)   NULL,
-    Instructor               NVARCHAR(200)   NULL DEFAULT(''),
-    DurationHours            INT             NULL DEFAULT(0),
-    CertificationIssued      BIT             NULL DEFAULT(0),
-    CertificationIssuedBy    NVARCHAR(200)   NULL,
-    CertificationExpiryDate  DATETIME2       NULL,
-    RecordCreatedBy          NVARCHAR(256)   NOT NULL,
-    RecordCreatedDate        DATETIME2       NOT NULL DEFAULT SYSUTCDATETIME(),
-    RecordUpdatedBy          NVARCHAR(256)   NOT NULL,
-    RecordUpdatedDate        DATETIME2       NOT NULL DEFAULT SYSUTCDATETIME()
-);
-GO
-
--- Useful indexes for common lookups
-CREATE NONCLUSTERED INDEX IX_TrainingEvent_StartDate
-    ON dbo.OpsReady_TrainingEvent (StartDate);
-	GO
-CREATE NONCLUSTERED INDEX IX_TrainingEvent_Instructor
-    ON dbo.OpsReady_TrainingEvent (Instructor);
-GO
-CREATE NONCLUSTERED INDEX IX_TrainingEvent_Title
-    ON dbo.OpsReady_TrainingEvent (Title);
-GO
+CREATE TABLE dbo.OpsReady_TrainingEvent (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Title NVARCHAR(250) NULL,
+    Description NVARCHAR(500) NULL,
+    TrainingType NVARCHAR(100) NULL,
+    TrainingCategory NVARCHAR(100) NULL,
+    TrainingSubCategory NVARCHAR(100) NULL,
+    TrainingTier NVARCHAR(100) NULL,
+    SkillLevel NVARCHAR(200) NULL,
+    SkillArea NVARCHAR(200) NULL,
+    AssessmentCriteria NVARCHAR(200) NULL,
+    Audience NVARCHAR(500) NULL,
+    Prerequisites NVARCHAR(500) NULL,
+    Objectives NVARCHAR(500) NULL,
+    MaterialsProvided NVARCHAR(500) NULL,
+    DeliveryMethod NVARCHAR(500) NULL,
+    Schedule NVARCHAR(500) NULL,
+    StartDate DATETIME2 NULL,
+    EndDate DATETIME2 NULL,
+    EnrollmentDeadline DATETIME2 NULL,
+    Location NVARCHAR(500) NULL,
+    Provider NVARCHAR(200) NULL,
+    Instructor NVARCHAR(100) NULL,
+    DurationHours INT NULL,
+    CertificationIssued BIT NULL,
+    CertificationIssuedBy NVARCHAR(100) NULL,
+    CertificationExpiryDate DATETIME2 NULL,
+    Notes NVARCHAR(1000) NULL,
+    Status NVARCHAR(100) NULL,
+    MandatedBy NVARCHAR(100) NULL,
+    RecordCreatedBy NVARCHAR(100) NULL,
+    RecordCreatedDate DATETIME2 NULL,
+    RecordUpdatedBy NVARCHAR(100) NULL,
+    RecordUpdatedDate DATETIME2 NULL
+)

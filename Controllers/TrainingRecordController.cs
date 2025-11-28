@@ -22,7 +22,7 @@ namespace OpsReady.Controllers
         public async Task<IActionResult> List(
             [FromQuery] int? userId,
             [FromQuery] int? trainingEventId,
-            [FromQuery] bool? completed,
+            [FromQuery] bool? completed,        
             [FromQuery] int? evaluatorId,
             [FromQuery] DateTime? from,
             [FromQuery] DateTime? to)
@@ -64,39 +64,49 @@ namespace OpsReady.Controllers
             _context.Set<TrainingRecord>().Add(input);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(Get), new { id = input.TrainingRecordId }, input);
+            return CreatedAtAction(nameof(Get), new { id = input.Id }, input);
         }
 
         // PUT: api/TrainingRecord/5
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] TrainingRecord input)
         {
-            if (input == null || id != input.TrainingRecordId) return BadRequest();
+            if (input == null || id != input.Id) return BadRequest();
 
             var stored = await _context.Set<TrainingRecord>().FindAsync(id);
             if (stored == null) return NotFound();
 
-            // Map updatable fields explicitly
+            // Map updatable fields explicitly (do not change PK or original creation metadata)
             stored.TrainingEventId = input.TrainingEventId;
             stored.UserId = input.UserId;
-            stored.CompletionDate = input.CompletionDate;
+            stored.AssignedBy = input.AssignedBy;
+            stored.Attendance = input.Attendance;
             stored.Status = input.Status;
             stored.TrainingOutcome = input.TrainingOutcome;
             stored.Score = input.Score;
+            stored.CertificationNumber = input.CertificationNumber;
+            stored.SkillLevelAchieved = input.SkillLevelAchieved;
             stored.ProficiencyLevel = input.ProficiencyLevel;
             stored.Notes = input.Notes;
             stored.HoursCompleted = input.HoursCompleted;
             stored.Completed = input.Completed;
-            stored.ExpirationDate = input.ExpirationDate;
             stored.Strengths = input.Strengths;
             stored.AreasForImprovement = input.AreasForImprovement;
             stored.FollowUpRequired = input.FollowUpRequired;
-            stored.FollowUpDate = input.FollowUpDate;
             stored.EvaluatorId = input.EvaluatorId;
-            stored.EvaluatorBadgeNumber = input.EvaluatorBadgeNumber;
-            stored.EvaluationDate = input.EvaluationDate;
+            stored.Evaluator = input.Evaluator;
+            stored.EvaluationComments = input.EvaluationComments;
             stored.EvaluationType = input.EvaluationType;
+            stored.OfficialComments = input.OfficialComments;
+            stored.EnrollmentDate = input.EnrollmentDate;
+            stored.EvaluationDate = input.EvaluationDate;
+            stored.FollowUpDate = input.FollowUpDate;
+            stored.ExpirationDate = input.ExpirationDate;
+            stored.CertificationIssuedDate = input.CertificationIssuedDate;
+            stored.CertificationExpiryDate = input.CertificationExpiryDate;
+            stored.CompletionDate = input.CompletionDate;
 
+            // Keep original RecordCreatedBy/RecordCreatedDate; update updated metadata
             stored.RecordUpdatedBy = User?.Identity?.Name ?? "system";
             stored.RecordUpdatedDate = DateTime.UtcNow;
 
