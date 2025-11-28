@@ -13,7 +13,15 @@ namespace OpsReady.Data
         }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<UserProfile> UserProfiles { get; set; }    // <-- add this
+        public DbSet<UserProfile> UserProfiles { get; set; }
+
+        public DbSet<TrainingEvent> TrainingEvents { get; set; }    
+   
+        public DbSet<TrainingRecord> TrainingRecords { get; set; }
+
+        public DbSet<TrainingAssignment> TrainingAssignments{ get; set; } // <-- add this
+
+
 
         //protected override void OnModelCreating(ModelBuilder modelBuilder)
         //{

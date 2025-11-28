@@ -1,0 +1,12 @@
+CREATE TABLE [dbo].[OpsReady_TrainingAssignment]
+(
+	[Id] INT NOT NULL PRIMARY KEY,
+	[TrainingEventId] INT NOT NULL,
+	[UserId] INT NOT NULL,
+	[TrainingRecordId] INT NOT NULL,
+	[AssignedDate] DATETIME2 NOT NULL,
+	[AssignedByUserId] INT NOT NULL,
+	[CreatedDate] DATETIME2 NOT NULL,
+	[ModifiedByUserId] INT NULL,
+	[ModifiedDate] DATETIME2 NULL
+)
