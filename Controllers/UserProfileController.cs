@@ -39,11 +39,14 @@ namespace OpsReady.Controllers
             return Ok(results);
         }
 
-        // GET: api/UserProfile/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        // GET: api/UserProfile/{userId}
+        [HttpGet("{userId}")]
+        public async Task<IActionResult> Get(int userId)
         {
-            var profile = await _context.Set<UserProfile>().FindAsync(id);
+            var profile = await _context.Set<UserProfile>()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.UserId == userId);
+
             if (profile == null) return NotFound();
             return Ok(profile);
         }
@@ -53,6 +56,7 @@ namespace OpsReady.Controllers
         public async Task<IActionResult> Create([FromBody] UserProfile profile)
         {
             if (profile == null) return BadRequest();
+            profile.Id = null; // Ensure PK is zero for new record
 
             var now = DateTime.UtcNow;
             profile.RecordCreatedDate = now;
@@ -63,7 +67,7 @@ namespace OpsReady.Controllers
             _context.Set<UserProfile>().Add(profile);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(Get), new { id = profile.UserId }, profile);
+            return CreatedAtAction(nameof(Get), new { userId = profile.UserId }, profile);
         }
 
         // PUT: api/UserProfile
