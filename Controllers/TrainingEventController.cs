@@ -55,30 +55,38 @@ namespace OpsReady.Controllers
         }
 
         // POST: api/TrainingEvent
+        // Accepts a TrainingEvent object and decides to create or update based on its Id.
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] TrainingEvent input)
         {
             if (input == null) return BadRequest();
 
-            var now = DateTime.UtcNow;
-            input.RecordCreatedDate = now;
-            input.RecordUpdatedDate = now;
-            input.RecordCreatedBy ??= User?.Identity?.Name ?? "system";
-            input.RecordUpdatedBy ??= User?.Identity?.Name ?? "system";
+            // If Id is not provided (0 or negative), create a new record
+            if (input.Id <= 0)
+            {
+                var now = DateTime.UtcNow;
+                input.RecordCreatedDate = now;
+                input.RecordUpdatedDate = now;
+                input.RecordCreatedBy ??= User?.Identity?.Name ?? "system";
+                input.RecordUpdatedBy ??= User?.Identity?.Name ?? "system";
 
-            _context.Set<TrainingEvent>().Add(input);
-            await _context.SaveChangesAsync();
+                _context.Set<TrainingEvent>().Add(input);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(Get), new { trainingEventId = input.Id }, input);
+                return CreatedAtAction(nameof(Get), new { trainingEventId = input.Id }, input);
+            }
+
+            // Otherwise delegate to the Update logic to update the existing record
+            return await Update(input);
         }
 
-        // PUT: api/TrainingEvent/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] TrainingEvent input)
+        // PUT: api/TrainingEvent
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] TrainingEvent input)
         {
-            if (input == null || id != input.Id) return BadRequest();
+            if (input == null || input.Id <= 0) return BadRequest("Id must be provided and non-zero in the payload.");
 
-            var stored = await _context.Set<TrainingEvent>().FindAsync(id);
+            var stored = await _context.Set<TrainingEvent>().FindAsync(input.Id);
             if (stored == null) return NotFound();
 
             // Map updatable fields explicitly (do not change PK or original creation metadata)
