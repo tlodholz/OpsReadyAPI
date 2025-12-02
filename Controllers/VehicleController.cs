@@ -10,9 +10,9 @@ namespace OpsReady.Controllers
     [ApiController]
     public class VehicleController : ControllerBase
     {
-        private readonly UserDbContext _context;
+        private readonly AppDbContext _context;
 
-        public VehicleController(UserDbContext context)
+        public VehicleController(AppDbContext context)
         {
             _context = context;
         }

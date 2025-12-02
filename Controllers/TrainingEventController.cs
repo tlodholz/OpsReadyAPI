@@ -9,9 +9,9 @@ namespace OpsReady.Controllers
     [ApiController]
     public class TrainingEventController : ControllerBase
     {
-        private readonly UserDbContext _context;
+        private readonly AppDbContext _context;
 
-        public TrainingEventController(UserDbContext context)
+        public TrainingEventController(AppDbContext context)
         {
             _context = context;
         }

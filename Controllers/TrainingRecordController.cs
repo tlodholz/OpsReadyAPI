@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OpsReady.Data;
 using OpsReady.Models;
@@ -9,44 +10,60 @@ namespace OpsReady.Controllers
     [ApiController]
     public class TrainingRecordController : ControllerBase
     {
-        private readonly UserDbContext _context;
+        private readonly AppDbContext _context;
 
-        public TrainingRecordController(UserDbContext context)
+        public TrainingRecordController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/TrainingRecord
-        // Optional query: ?userId=1&trainingEventId=2&completed=true&evaluatorId=5&from=2025-01-01&to=2025-12-31
-        [HttpGet]
-        public async Task<IActionResult> List(
-            [FromQuery] int? userId,
-            [FromQuery] int? trainingEventId,
-            [FromQuery] bool? completed,        
-            [FromQuery] int? evaluatorId,
-            [FromQuery] DateTime? from,
-            [FromQuery] DateTime? to)
+        // GET: api/trainingrecord/{id}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetRecord(int id)
         {
-            var q = _context.Set<TrainingRecord>().AsQueryable();
-
-            if (userId.HasValue) q = q.Where(r => r.UserId == userId.Value);
-            if (trainingEventId.HasValue) q = q.Where(r => r.TrainingEventId == trainingEventId.Value);
-            if (completed.HasValue) q = q.Where(r => r.Completed == completed.Value);
-            if (evaluatorId.HasValue) q = q.Where(r => r.EvaluatorId == evaluatorId.Value);
-            if (from.HasValue) q = q.Where(r => r.CompletionDate >= from.Value);
-            if (to.HasValue) q = q.Where(r => r.CompletionDate <= to.Value);
-
-            var results = await q.AsNoTracking().ToListAsync();
-            return Ok(results);
+            var record = await _context.TrainingRecords.FindAsync(id);
+            if (record == null) return NotFound();
+            return Ok(record);
         }
 
-        // GET: api/TrainingRecord/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        // GET: api/trainingrecord/event/{trainingEventId}
+        // Returns all training records for the specified training event (via TrainingAssignment)
+        [HttpGet("event/{trainingEventId}")]
+        public async Task<IActionResult> GetByTrainingEvent(int trainingEventId)
         {
-            var rec = await _context.Set<TrainingRecord>().FindAsync(id);
-            if (rec == null) return NotFound();
-            return Ok(rec);
+            var records = await _context.TrainingAssignments
+                .Where(a => a.TrainingEventId == trainingEventId)
+                .Join(
+                    _context.TrainingRecords,
+                    a => a.Id,                 // join on assignment.Id
+                    r => r.TrainingAssignmentId, // to records.TrainingAssignmentId FK
+                    (a, r) => r
+                )
+                .AsNoTracking()
+                .Distinct()
+                .ToListAsync();
+
+            return Ok(records);
+        }
+
+        // GET: api/trainingrecord/user/{userId}
+        // Returns all training records for the specified user (via TrainingAssignment -> TrainingRecord)
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetByUser(int userId)
+        {
+            var records = await _context.TrainingAssignments
+                .Where(a => a.UserId == userId)
+                .Join(
+                    _context.TrainingRecords,
+                    a => a.Id,                   // assignment.Id
+                    r => r.TrainingAssignmentId, // record.TrainingAssignmentId FK
+                    (a, r) => r
+                )
+                .AsNoTracking()
+                .Distinct()
+                .ToListAsync();
+
+            return Ok(records);
         }
 
         // POST: api/TrainingRecord
@@ -64,21 +81,22 @@ namespace OpsReady.Controllers
             _context.Set<TrainingRecord>().Add(input);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(Get), new { id = input.Id }, input);
+            return CreatedAtAction(nameof(GetRecord), new { id = input.Id }, input);
         }
 
-        // PUT: api/TrainingRecord/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] TrainingRecord input)
+        // PUT: api/TrainingRecord
+        // Accepts the TrainingRecord in the body; the Id inside the object is used to locate the record.
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] TrainingRecord input)
         {
-            if (input == null || id != input.Id) return BadRequest();
+            if (input == null || input.Id <= 0)
+                return BadRequest("Payload must include a non-zero Id.");
 
-            var stored = await _context.Set<TrainingRecord>().FindAsync(id);
+            var stored = await _context.Set<TrainingRecord>().FindAsync(input.Id);
             if (stored == null) return NotFound();
 
             // Map updatable fields explicitly (do not change PK or original creation metadata)
-            stored.TrainingEventId = input.TrainingEventId;
-            stored.UserId = input.UserId;
+            stored.TrainingAssignmentId = input.TrainingAssignmentId;
             stored.AssignedBy = input.AssignedBy;
             stored.Attendance = input.Attendance;
             stored.Status = input.Status;

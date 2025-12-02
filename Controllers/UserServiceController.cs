@@ -16,10 +16,10 @@ namespace OpsReady.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly UserDbContext _context;
+        private readonly AppDbContext _context;
         private readonly PasswordHasher<User> _hasher;
 
-        public AuthController(UserDbContext context)
+        public AuthController(AppDbContext context)
         {
             _context = context;
             _hasher = new PasswordHasher<User>();

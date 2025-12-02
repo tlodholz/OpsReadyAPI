@@ -9,8 +9,7 @@ namespace OpsReady.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public int TrainingEventId { get; set; }
-        public int UserId { get; set; }
+        public int TrainingAssignmentId { get; set; }
         public string AssignedBy { get; set; } = string.Empty;
         public string Attendance { get; set; } = string.Empty;// (Attended, No-Show, Cancelled,Absent, Excused, In Progress)
         public string Status { get; set; } = string.Empty;

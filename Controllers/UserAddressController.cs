@@ -9,9 +9,9 @@ namespace OpsReady.Controllers
     [ApiController]
     public class UserAddressController : ControllerBase
     {
-        private readonly UserDbContext _context;
+        private readonly AppDbContext _context;
 
-        public UserAddressController(UserDbContext context)
+        public UserAddressController(AppDbContext context)
         {
             _context = context;
         }

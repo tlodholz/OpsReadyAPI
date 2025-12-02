@@ -9,9 +9,9 @@ namespace OpsReady.Controllers
     [ApiController]
     public class UserProfileController : ControllerBase
     {
-        private readonly UserDbContext _context;
+        private readonly AppDbContext _context;
 
-        public UserProfileController(UserDbContext context)
+        public UserProfileController(AppDbContext context)
         {
             _context = context;
         }

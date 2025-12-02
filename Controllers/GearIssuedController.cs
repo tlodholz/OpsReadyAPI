@@ -9,9 +9,9 @@ namespace OpsReady.Controllers
     [ApiController]
     public class GearIssuedController : ControllerBase
     {
-        private readonly UserDbContext _context;
+        private readonly AppDbContext _context;
 
-        public GearIssuedController(UserDbContext context)
+        public GearIssuedController(AppDbContext context)
         {
             _context = context;
         }

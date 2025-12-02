@@ -5,20 +5,17 @@ using Microsoft.EntityFrameworkCore.Metadata; // Add this using directive
 
 namespace OpsReady.Data
 {
-    public class UserDbContext : DbContext
+    public class AppDbContext : DbContext
     {
-        public UserDbContext(DbContextOptions<UserDbContext> options)
+        public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {
         }
 
         public DbSet<User> Users { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
-
         public DbSet<TrainingEvent> TrainingEvents { get; set; }    
-   
         public DbSet<TrainingRecord> TrainingRecords { get; set; }
-
         public DbSet<TrainingAssignment> TrainingAssignments{ get; set; } // <-- add this
 
 

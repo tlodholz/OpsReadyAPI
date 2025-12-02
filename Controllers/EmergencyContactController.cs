@@ -9,9 +9,9 @@ namespace OpsReady.Controllers
     [ApiController]
     public class EmergencyContactController : ControllerBase
     {
-        private readonly UserDbContext _context;
+        private readonly AppDbContext _context;
 
-        public EmergencyContactController(UserDbContext context)
+        public EmergencyContactController(AppDbContext context)
         {
             _context = context;
         }
