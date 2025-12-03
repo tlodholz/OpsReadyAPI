@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OpsReady.Data;
 using OpsReady.Models;
-using System;
 
 namespace OpsReadyAPI.Controllers
 {
@@ -18,69 +20,87 @@ namespace OpsReadyAPI.Controllers
             _context = context;
         }
 
+        // Accepts a list of assignments, skips any already present (UserId + TrainingEventId)
         [HttpPost]
-        public async Task<IActionResult> AssignUser([FromBody] TrainingAssignment assignment)
+        public async Task<IActionResult> AssignUser([FromBody] List<TrainingAssignment> assignments)
         {
-            if (assignment == null) return BadRequest();
-
-            var exists = await _context.TrainingAssignments
-                .AnyAsync(a => a.UserId == assignment.UserId && a.TrainingEventId == assignment.TrainingEventId);
-
-            if (exists) return BadRequest("User already assigned to this event.");
+            if (assignments == null || assignments.Count == 0) return BadRequest();
 
             var now = DateTime.UtcNow;
+            var created = new List<object>();
+            var skipped = new List<object>();
 
-            // Use a transaction so assignment + record are created atomically.
             await using var tx = await _context.Database.BeginTransactionAsync();
             try
             {
-                // Create the assignment first so we have the assignment.Id to link from the record.
-                assignment.AssignedDate = now;
-                assignment.CreatedDate = now;
-                _context.TrainingAssignments.Add(assignment);
-                await _context.SaveChangesAsync(); // assignment.Id is now populated
-
-                // Create the training record and link it to the assignment via TrainingAssignmentId.
-                var record = new TrainingRecord
+                // Process each assignment; skip when UserId+TrainingEventId already exists
+                foreach (var assignment in assignments)
                 {
-                    TrainingAssignmentId = assignment.Id,
-                    AssignedBy = assignment.AssignedByUserId.ToString(),
-                    Attendance = string.Empty,
-                    Status = string.Empty,
-                    TrainingOutcome = string.Empty,
-                    Score = string.Empty,
-                    CertificationNumber = string.Empty,
-                    SkillLevelAchieved = string.Empty,
-                    ProficiencyLevel = string.Empty,
-                    Notes = string.Empty,
-                    HoursCompleted = 0,
-                    Completed = false,
-                    Strengths = string.Empty,
-                    AreasForImprovement = string.Empty,
-                    FollowUpRequired = false,
-                    EvaluatorId = 0,
-                    Evaluator = string.Empty,
-                    EvaluationComments = string.Empty,
-                    EvaluationType = string.Empty,
-                    OfficialComments = string.Empty,
-                    EnrollmentDate = now,
-                    EvaluationDate = now,
-                    FollowUpDate = now,
-                    ExpirationDate = DateOnly.FromDateTime(now),
-                    CertificationIssuedDate = now,
-                    CertificationExpiryDate = now,
-                    CompletionDate = now,
-                    RecordCreatedBy = User?.Identity?.Name ?? "system",
-                    RecordCreatedDate = now,
-                    RecordUpdatedBy = User?.Identity?.Name ?? "system",
-                    RecordUpdatedDate = now
-                };
+                    if (assignment == null)
+                    {
+                        continue;
+                    }
 
-                _context.TrainingRecords.Add(record);
-                await _context.SaveChangesAsync(); // record.Id populated
+                    var exists = await _context.TrainingAssignments
+                        .AnyAsync(a => a.UserId == assignment.UserId && a.TrainingEventId == assignment.TrainingEventId);
 
-                // Return assignment and the created TrainingRecord id
-                return Ok(new { assignment, trainingRecordId = record.Id });
+                    if (exists)
+                    {
+                        skipped.Add(new { assignment.UserId, assignment.TrainingEventId });
+                        continue;
+                    }
+
+                    // create assignment first to obtain Id for FK
+                    assignment.AssignedDate = now;
+                    assignment.CreatedDate = now;
+                    _context.TrainingAssignments.Add(assignment);
+                    await _context.SaveChangesAsync(); // populate assignment.Id
+
+                    // create linked TrainingRecord
+                    var record = new TrainingRecord
+                    {
+                        TrainingAssignmentId = assignment.Id,
+                        AssignedBy = assignment.AssignedByUserId.ToString(),
+                        Attendance = string.Empty,
+                        Status = string.Empty,
+                        TrainingOutcome = string.Empty,
+                        Score = string.Empty,
+                        CertificationNumber = string.Empty,
+                        SkillLevelAchieved = string.Empty,
+                        ProficiencyLevel = string.Empty,
+                        Notes = string.Empty,
+                        HoursCompleted = 0,
+                        Completed = false,
+                        Strengths = string.Empty,
+                        AreasForImprovement = string.Empty,
+                        FollowUpRequired = false,
+                        EvaluatorId = 0,
+                        Evaluator = string.Empty,
+                        EvaluationComments = string.Empty,
+                        EvaluationType = string.Empty,
+                        OfficialComments = string.Empty,
+                        EnrollmentDate = now,
+                        EvaluationDate = now,
+                        FollowUpDate = now,
+                        ExpirationDate = DateOnly.FromDateTime(now),
+                        CertificationIssuedDate = now,
+                        CertificationExpiryDate = now,
+                        CompletionDate = now,
+                        RecordCreatedBy = User?.Identity?.Name ?? "system",
+                        RecordCreatedDate = now,
+                        RecordUpdatedBy = User?.Identity?.Name ?? "system",
+                        RecordUpdatedDate = now
+                    };
+
+                    _context.TrainingRecords.Add(record);
+                    await _context.SaveChangesAsync(); // populate record.Id
+
+                    created.Add(new { assignment.Id, assignment.UserId, assignment.TrainingEventId, trainingRecordId = record.Id });
+                }
+
+                await tx.CommitAsync();
+
+                return Ok(new { created, skipped });
             }
             catch
             {
