@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace OpsReady.Models
@@ -6,6 +7,8 @@ namespace OpsReady.Models
     [Table("OpsReady_TrainingAssignment")]
     public class TrainingAssignment
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int TrainingEventId { get; set; }
         public int UserId { get; set; }
