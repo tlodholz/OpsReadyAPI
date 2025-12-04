@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OpsReady.Data;
 using OpsReady.Models;
+using System.Threading.Tasks;
 
 namespace OpsReadyAPI.Controllers
 {
@@ -107,6 +108,30 @@ namespace OpsReadyAPI.Controllers
                 await tx.RollbackAsync();
                 throw;
             }
+        }
+
+        // GET: api/TrainingAssignment/event/{eventId}/profiles
+        // Returns a list of UserProfile objects for users registered for the specified training event
+        [HttpGet("event/{eventId}/profiles")]
+        public async Task<IActionResult> GetUsersForEvent(int eventId)
+        {
+            // get distinct user ids assigned to the event
+            var userIds = await _context.TrainingAssignments
+                .Where(a => a.TrainingEventId == eventId)
+                .Select(a => a.UserId)
+                .Distinct()
+                .ToListAsync();
+
+            if (userIds == null || !userIds.Any())
+            {
+                return Ok(new List<UserProfile>());
+            }
+
+            var profiles = await _context.UserProfiles
+                .Where(p => p.UserId != null && userIds.Contains(p.UserId.Value))
+                .ToListAsync();
+
+            return Ok(profiles);
         }
 
         [HttpPut("{id}")]
