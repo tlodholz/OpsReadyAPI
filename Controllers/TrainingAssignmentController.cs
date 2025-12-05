@@ -110,9 +110,54 @@ namespace OpsReadyAPI.Controllers
             }
         }
 
+        // DELETE: api/TrainingAssignment/user/{userId}/event/{eventId}
+        // Deletes the user's assignment (identified directly by userId and trainingEventId)
+        // and removes any linked TrainingRecord(s).
+        [HttpDelete("user/{userId}/event/{eventId}")]
+        public async Task<IActionResult> DeleteAssignmentForUser(int userId, int eventId)
+        {
+            await using var tx = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var assignment = await _context.TrainingAssignments
+                    .FirstOrDefaultAsync(a => a.UserId == userId && a.TrainingEventId == eventId);
+
+                if (assignment == null)
+                {
+                    return NotFound(new { message = "Training assignment not found for the specified user and event." });
+                }
+
+                // remove linked training records first to preserve referential integrity
+                var linkedRecords = await _context.TrainingRecords
+                    .Where(r => r.TrainingAssignmentId == assignment.Id)
+                    .ToListAsync();
+
+                if (linkedRecords.Any())
+                {
+                    _context.TrainingRecords.RemoveRange(linkedRecords);
+                }
+
+                _context.TrainingAssignments.Remove(assignment);
+
+                await _context.SaveChangesAsync();
+                await tx.CommitAsync();
+
+                return Ok(new
+                {
+                    deletedAssignmentId = assignment.Id,
+                    deletedRecordIds = linkedRecords.Select(r => r.Id).ToList()
+                });
+            }
+            catch
+            {
+                await tx.RollbackAsync();
+                throw;
+            }
+        }
+
         // GET: api/TrainingAssignment/event/{eventId}/profiles
         // Returns a list of UserProfile objects for users registered for the specified training event
-        [HttpGet("event/{eventId}/profiles")]
+        [HttpGet("event/{eventId}/profiles")]       
         public async Task<IActionResult> GetUsersForEvent(int eventId)
         {
             // get distinct user ids assigned to the event
