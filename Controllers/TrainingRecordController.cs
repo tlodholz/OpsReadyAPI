@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OpsReady.Data;
 using OpsReady.Models;
+using OpsReadyAPI.Models.Dto;
 
 namespace OpsReady.Controllers
 {
@@ -27,23 +28,46 @@ namespace OpsReady.Controllers
         }
 
         // GET: api/trainingrecord/event/{trainingEventId}
-        // Returns all training records for the specified training event (via TrainingAssignment)
-        [HttpGet("event/{trainingEventId}")]
+        // Returns training records for the specified training event, with user/profile info
+        [HttpGet("event/{trainingEventId}", Name = "GetByTrainingEvent")]
         public async Task<IActionResult> GetByTrainingEvent(int trainingEventId)
         {
-            var records = await _context.TrainingAssignments
-                .Where(a => a.TrainingEventId == trainingEventId)
-                .Join(
-                    _context.TrainingRecords,
-                    a => a.Id,                 // join on assignment.Id
-                    r => r.TrainingAssignmentId, // to records.TrainingAssignmentId FK
-                    (a, r) => r
-                )
+            var query =
+                from a in _context.TrainingAssignments
+                where a.TrainingEventId == trainingEventId
+                join r in _context.TrainingRecords on a.Id equals r.TrainingAssignmentId
+                join p in _context.UserProfiles on a.UserId equals p.UserId into pgrp
+                from profile in pgrp.DefaultIfEmpty()
+                select new TrainingRecordWithUsersDto
+                {
+                    Id = r.Id,
+                    TrainingAssignmentId = r.TrainingAssignmentId,
+                    AssignedBy = r.AssignedBy,
+                    Attendance = r.Attendance,
+                    Status = r.Status,
+                    TrainingOutcome = r.TrainingOutcome,
+                    Score = r.Score,
+                    EnrollmentDate = r.EnrollmentDate,
+                    CompletionDate = r.CompletionDate,
+                    RecordCreatedDate = r.RecordCreatedDate,
+                    RecordUpdatedDate = r.RecordUpdatedDate,
+                    User = profile == null ? null : new TrainingRecordWithUsersDto.UserProfileDto
+                    {
+                        Id = profile.Id ?? 0, // Fixes CS0266 and CS8629 by providing a default value if null
+                        UserId = profile.UserId,
+                        FirstName = profile.FirstName,
+                        LastName = profile.LastName,
+                        EmailAddress = profile.EmailAddress,
+                        BadgeNumber = profile.BadgeNumber
+                    }
+                };
+
+            var results = await query
                 .AsNoTracking()
                 .Distinct()
                 .ToListAsync();
 
-            return Ok(records);
+            return Ok(results);
         }
 
         // GET: api/trainingrecord/user/{userId}
